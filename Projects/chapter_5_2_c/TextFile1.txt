@@ -1,0 +1,61 @@
+for(*p++ = c; (*p++ = c = getch()) != ']' && isdigit(c); )
+	;
+if(c == ']')
+{
+	return tokentype = BRACKETS;
+}
+else
+{	
+	printf("error: invalid index \n");
+	return tokentype = c;
+}
+	
+
+if( c == ']' || !left_parenthesis)
+	printf("error: excessive bracket or parenthesis \n");	
+	
+	
+/* my strcmp; return < 0 if s < t, 0 if s == t, > 0 if s>t */
+int strcmp_x(char *s, char *t)
+{
+	for (; *s == *t; s++, t++)
+		if (*s == '\0')
+			return 0;
+	return (*s - *t);
+} 
+
+
+
+
+else if(type == PARENS_ARG)
+{
+	strcat_x(out, " function taking ");
+	strcat_x(out, token);
+	strcat_x(out, " and returning");
+}
+ 
+int CONST = 0;
+if(strcmp_x(token, "const") == 0)
+{	
+	CONST = 1;
+	strcpy_x(datatype, token);
+}
+else if ((strcmp_x(token, "char") == 0) || (strcmp_x(token, "int") == 0))
+	strcpy_x(datatype, token);
+else
+	printf("error: invalid input \n");
+int type = gettoken();
+if (type == NAME)
+{
+	if(CONST && (strcmp_x(token, "char") == 0 || strcmp_x(token, "int") == 0))
+		strcat_x(datatype, token);
+	else if(!CONST && strcmp_x(token, "const") == 0)
+		strcat_x(datatype, token);
+	else
+		printf("error: invalid input \n");
+
+}
+
+
+
+

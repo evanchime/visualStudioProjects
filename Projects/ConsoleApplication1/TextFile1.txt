@@ -1,0 +1,21 @@
+HasPtr& operator=(HasPtr &rhs)
+{
+	auto new_pt = new std::string(*rhs.ps);
+	delete ps;
+	ps = std::move(new_pt);
+	i = rhs.i;
+	return *this;
+}
+
+HasPtr& operator=(HasPtr &&rhs)
+{
+	if(this != rhs)
+	{
+		ps = std::move(rhs.ps);
+		i = std::move(rhs.i);
+	}
+	cout << "move assigned";
+	return *this;
+}
+
+

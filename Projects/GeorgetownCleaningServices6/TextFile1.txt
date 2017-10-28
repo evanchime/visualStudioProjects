@@ -1,0 +1,77 @@
+using namespace System;
+using namespace System::IO;
+
+CCleaningDeposit::CCleaningDeposit(void)
+{
+    this->custInfo = gcnew CCustomer;
+    this->depot    = gcnew CCleaningOrderDetails;
+}
+
+CCustomer ^ CCleaningDeposit::IdentifyCustomer(void)
+{
+    String ^ strCustomerName;
+    String ^ strTelephoneNumber, ^ strPhoneFormatted;
+
+    Console::Write(L"Enter Customer Phone Number: ");
+    strTelephoneNumber = Console::ReadLine();
+
+    // Remove the spaces, parentheses, if any, and dashes, if any
+    strTelephoneNumber = strTelephoneNumber->Replace(L" ", "");
+    strTelephoneNumber = strTelephoneNumber->Replace(L"(L", "");
+    strTelephoneNumber = strTelephoneNumber->Replace(L")", "");
+    strTelephoneNumber = strTelephoneNumber->Replace(L"-", "");
+
+    if( strTelephoneNumber->Length != 10 )
+    {
+        Console::WriteLine(L"Invalid telphone number: {0} " 
+                           L"characters instead of 10 digits",
+                           strTelephoneNumber->Length);
+        return nullptr;
+    }
+
+	strPhoneFormatted = String::Concat(L"(L",
+		                           strTelephoneNumber->Substring(0, 3),
+                                           L") ",
+					   strTelephoneNumber->Substring(3, 3),
+                                           L"-",
+					   strTelephoneNumber->Substring(6, 4));
+
+    String ^ strFilename = strTelephoneNumber + L".gcs";
+    String ^ strPath = L"C:\\Georgetown Cleaning Services\\Customers\\" 
+                       L"\\" + strFilename;
+
+	if( File::Exists(strPath) )
+    {
+        FileStream ^ stmCustomer =
+			File::Open(strPath, FileMode::Open, FileAccess::Read);
+        BinaryReader ^ bnrCustomer = gcnew BinaryReader(stmCustomer);
+
+        custInfo->Name = bnrCustomer->ReadString();
+        custInfo->PhoneNumber = bnrCustomer->ReadString();
+
+        Console::WriteLine(L"\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        Console::WriteLine(L"-/- Georgetown Cleaning Services -/-");
+        Console::WriteLine(L"------------------------------------");
+        Console::WriteLine(L"Customer Name: {0}", custInfo->Name);
+        Console::WriteLine(L"Phone Number:  {0}", custInfo->PhoneNumber);
+        Console::WriteLine(L"------------------------------------\n");
+    }
+    else // If the customer information was not found in a file
+    {
+        Console::WriteLine(L"It looks like this is the first time you " 
+                           L"are trusting  us with your cleaning order");
+        Directory::CreateDirectory(L"C:\\Georgetown Cleaning Services\\Customers");
+		FileStream ^ stmCustomer = File::Create(strPath);
+        BinaryWriter ^ bnwCustomer =
+                    gcnew BinaryWriter(stmCustomer);
+        Console::Write(L"Enter Customer Name: ");
+        strCustomerName = Console::ReadLine();
+        bnwCustomer->Write(strCustomerName);
+        bnwCustomer->Write(strPhoneFormatted);
+
+        custInfo->Name = strCustomerName;
+        custInfo->PhoneNumber = strTelephoneNumber;
+    }
+        
+    return custInfo;
+}

@@ -1,0 +1,127 @@
+CFlowerInventory ^ flowers = gcnew CFlowerInventory;
+    CFlower ^ nice;
+
+    nice = gcnew CFlower;
+    nice->Type  = Lilies;
+    nice->Color = White;
+    nice->Arrangement = Bouquet;
+    nice->UnitPrice = 39.95;
+    flowers->Add(nice);
+
+    nice = gcnew CFlower;
+    nice->Type = Daisies;
+    nice->Color = Various;
+    nice->Arrangement = Bouquet;
+    nice->UnitPrice = 40.50;
+    flowers->Add(nice);
+
+    nice = gcnew CFlower;
+    nice->Type = Carnations;
+    nice->Color = Lavender;
+    nice->Arrangement = Any;
+    nice->UnitPrice = 34.85;
+    flowers->Add(nice);
+
+    nice = gcnew CFlower;
+    nice->Type = Roses;
+    nice->Color = Pink;
+    nice->Arrangement = Bouquet;
+    nice->UnitPrice = 29.95;
+    flowers->Add(nice);
+
+    nice = gcnew CFlower;
+    nice->Type = Daisies;
+    nice->Color = Yellow;
+    nice->Arrangement = Vase;
+    nice->UnitPrice = 29.95;
+    flowers->Add(nice);
+ 
+Lilies
+Daisies
+Carnation
+Roses
+Daisies
+ 
+ 
+    Console::WriteLine(L"//=//=//=//=//=//=//=//=//=//=//=//=//=//=//");
+    Console::WriteLine(L"Total: {0} flower items in current inventory",
+    flowers->Count);
+    Console::WriteLine(L"--------------------------------------------");
+    Console::WriteLine(L"Inventory Summary");
+    for(int i = 0; i < flowers->Count; i++)
+    {
+        Console::WriteLine(L"------------------------");
+        Console::WriteLine(L"Flower Information");
+        Console::Write(L"Type:        ");
+        switch(flowers->Get(i)->Type)
+        {
+        case 1:
+            Console::WriteLine(L"Roses");
+            break;
+        case 2:
+            Console::WriteLine(L"Lilies");
+            break;
+        case 3:
+            Console::WriteLine(L"Daisies");
+            break;
+        case 4:
+            Console::WriteLine(L"Carnations");
+            break;
+        case 5:
+            Console::WriteLine(L"Live Plant");
+            break;
+        default:
+            Console::WriteLine(L"Mixed");
+        }
+   
+        Console::Write(L"Color:       ");
+        switch(flowers->Get(i)->Color)
+        {
+        case 1:
+            Console::WriteLine(L"Red");
+            break;
+        case 2:
+            Console::WriteLine(L"White");
+            break;
+        case 3:
+            Console::WriteLine(L"Yellow");
+            break;
+        case 4:
+            Console::WriteLine(L"Pink");
+            break;
+        case 5:
+            Console::WriteLine(L"Orange");
+            break;
+        case 6:
+            Console::WriteLine(L"Blue");
+            break;
+        case 7:
+            Console::WriteLine(L"Lavender");
+            break;
+        default:
+            Console::WriteLine(L"Various");
+        }
+
+        Console::Write(L"Arrangement: ");
+        switch(flowers->Get(i)->Arrangement)
+        {
+        case 1:
+            Console::WriteLine(L"Bouquet");
+            break;
+        case 2:
+            Console::WriteLine(L"Vase");
+            break;
+        case 3:
+            Console::WriteLine(L"Basket");
+            break;
+        default:
+            Console::WriteLine(L"Any");
+        }
+
+        Console::WriteLine(L"Unit Price:  {0:F}",
+	    flowers->Get(i)->UnitPrice);
+    }
+    Console::WriteLine(L"//=//=//=//=//=//=//=//=//=//=//=//=//=//=//");
+
+    Console::WriteLine();
+    return 0;

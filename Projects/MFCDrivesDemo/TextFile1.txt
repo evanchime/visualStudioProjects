@@ -1,0 +1,36 @@
+char abc[100];
+CString str = _T("The list of Drives is ");
+CString str1 = _T("");
+DWORD WINAPI Drives = GetLogicalDrives();
+for(int iii = 1, jjj = 0; iii <= 26; iii++)
+{
+	if(Drives & iii)
+	{
+		/*abc[jjj++] = 'A' + (iii - 1);
+		abc[jjj++] = ':';
+		abc[jjj++] = ',';
+		abc[jjj++] = ' ';*/
+		std::string a = { char('A' + 1) };
+		str2 = _T(":, ");
+		str = str + _T(a) + str2; 
+	}
+}
+abc[jjj] = '\0';
+CString str = _T("The list of Drives is ");
+m_strDrives = str + _T(abc);
+str = _T(abc);
+m_strDrives = str;
+
+
+CString str = _T("The list of Drives is ");
+CString str1 = _T("");
+DWORD WINAPI Drives = GetLogicalDrives();
+for(int iii = 1; iii <= 26; iii++)
+{
+	if(Drives & iii)
+	{
+		std::string a = { char('A' + 1) };
+		str2 = _T(":, ");
+		str = str + _T(a) + str2; 
+	}
+}

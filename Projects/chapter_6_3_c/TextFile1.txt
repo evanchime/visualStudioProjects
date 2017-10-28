@@ -1,0 +1,4 @@
+while(*p++ == ' ')
+	;
+while (isalpha(*w = *p++))
+	w++;

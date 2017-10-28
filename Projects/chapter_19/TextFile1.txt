@@ -1,0 +1,245 @@
+class Token{
+	Token() : tok(INT), ival(0) {}
+	Token(const Token &t) : tok(t.tok) {copyunion(t);}
+	Token &operator=(const Token &);
+	Token &operator=(const int &);
+	Token &operator=(const char &);
+	Token &operator=(const double &);
+	Token &operator=(const string &);
+	Token(Token &&)noexcept;
+	Token &operator=(Token &&)noexcept;
+	~Token() {}
+	enum {INT, CHAR, DBL, STR} tok ;
+	union{
+		int ival;
+		char cval;
+		double dval;
+		string sval;
+		};
+	private:
+		void copyunion(Token &);
+};
+
+Token &Token::operator=(const Token &t)
+{
+	if(tok == STR && t.tok != STR)
+	{	
+		sval.~string();
+	}
+	if(tok == STR && t.tok == STR)
+		sval = t.sval;
+	else
+		copyunion(t);
+	tok = t.tok;
+	return *this;
+}
+
+Token &operator=(const int &x)
+{
+	ival = x;
+	tok = INT;
+	return *this;
+}
+
+Token &operator=(const char &x)
+{
+	cval = x;
+	tok = CHAR;
+	return *this;
+}
+
+Token &operator=(const double &x)
+{
+	dval = x;
+	tok = DBL;
+	return *this;
+}
+
+Token &operator=(const string &x)
+{
+	if(tok == STR)
+	
+	val = x;
+	tok = INT;
+	return *this;
+}
+Token &operator=(Token &&t)noexcept
+{
+	if(this != &t)
+	{	// if this object holds a string/Sales_data and t doesn't, we have to free the old string / Sales_data
+		if (tok == STR && t.tok != STR) 
+			sval. ~ string();
+		if (tok == SDATA && t.tok != SDATA)
+			s_dval. ~Sales_data();  
+		if (tok == STR && t.tok == STR)
+			sval = std::move(t.sval); // no need to construct a new string 
+		else if(tok == SDATA && t.tok == SDATA)
+			s_dval = std::move(t.s_dval); // no need to construct a new Sales_data
+		else 
+			moveUnion(std::move(t)); // will construct a string if t.tok is STR 
+		tok = std::move(t.tok);
+	} 
+	return *this; 
+}
+
+Token::Token(Token &&t)noexcept : tok(t.tok)  // move constructor
+{ 
+	copyunion(t);
+}
+
+void Token::copyunion(const Token &t)
+{
+	switch(t.tok)
+	{
+		case Token::INT :
+			ival = t.ival;
+			break;
+		case Token::CHAR :
+			cval = t.cval;
+			break;
+		case Token::DBL :
+			dval = t.dval;
+			break;
+		case Token::STR :
+			new(&sval) string(t.sval);
+			break;
+		default :
+			break;
+	 }
+}
+
+
+class Token 
+{ 
+public: // copy control needed because our class has a union with a string member 
+//defining the move constructor and move-assignment operator is left as an exercise 
+	Token():tok( INT), ival{ 0} { } 
+	Token( const Token &t): tok( t.tok) { copyUnion( t); } 
+	Token &operator =( const Token&); 
+	// if the union holds a string, we must destroy it; see § 19.1.2 (p. 824)
+	 ~ Token() 
+	 { 
+		if (tok == STR) 
+			sval. ~ string();
+		else if(tok == SDATA)
+			s_dval. ~Sales_data(); 
+	  } 
+	 // assignment operators to set the differing members of the union 
+	 Token &operator = (const std:: string&);
+	 Token &operator = (const Sales_data&); 
+	 Token &operator = (char); 
+	 Token &operator = (int); 
+	 Token &operator = (double); 
+	 private: 
+		enum {INT, CHAR, DBL, STR, SDATA} tok; // discriminant 
+		union { // anonymous union 
+			char cval; int ival; double dval; std:: string sval; Sales_data s_dval;
+			}; // each Token object has an unnamed member of this unnamed union type 
+			// check the discriminant and copy the union member as appropriate 
+		void copyUnion( const Token&); 
+};
+
+Token &Token:: operator =(int i) 
+{ 
+	if (tok == STR) 
+		sval. ~ string(); // if we have a string, free it 
+	else if(tok == SDATA)
+		s_dval. ~Sales_data(); // else if we have a Sales_data, free it 
+	ival = i; // assign to the appropriate member 
+	tok = INT; // update the discriminant 
+	return *this; 
+}
+
+Token &Token:: operator =(char i) 
+{ 
+	if (tok == STR) 
+		sval. ~ string(); // if we have a string, free it 
+	else if(tok == SDATA)
+		s_dval. ~Sales_data(); // else if we have a Sales_data, free it 
+	cval = i; // assign to the appropriate member 
+	tok = CHAR; // update the discriminant 
+	return *this; 
+}
+
+Token &Token:: operator =(double i) 
+{ 
+	if (tok == STR) 
+		sval. ~ string(); // if we have a string, free it 
+	else if(tok == SDATA)
+		s_dval. ~Sales_data(); // else if we have a Sales_data, free it 
+	dval = i; // assign to the appropriate member 
+	tok = DBL; // update the discriminant 
+	return *this; 
+}
+
+Token &Token:: operator =(const std:: string &s) 
+{ 
+	if (tok == STR) // if we already hold a string, just do an assignment 
+		sval = s;
+	else 
+	{
+		if(tok == SDATA)
+			s_dval. ~Sales_data(); // else if we have a Sales_data, free it
+		new(& sval) string(s); // otherwise construct a string   
+	}
+	tok = STR; // update the discriminant 
+	return *this; 
+}
+
+Token &Token:: operator =(const Sales_data &sd) 
+{ 
+	if (tok == SDATA) // if we already hold a Sales_data, just do an assignment 
+		s_dval = sd;
+	else 
+	{
+		if(tok == STR)
+			sval. ~string(); // else if we have a string, free it
+		new(& s_dval) Sales_data(sd); // otherwise construct a sales_data   
+	}
+	tok = SDATA; // update the discriminant 
+	return *this; 
+}
+
+void Token:: copyUnion(const Token &t) 
+{ 
+	switch (t.tok) 
+	{ 
+		case Token:: INT: ival = t.ival; break; 
+		case Token:: CHAR: cval = t.cval; break; 
+		case Token:: DBL: dval = t.dval; break; 
+		// to copy a string/sales_data construct it using placement new; see (§ 19.1.2 (p. 824)) 
+		case Token:: STR: new(& sval) string(t.sval); break; 
+		case Token:: SDATA : new(& s_dval) Sales_data(t.s_dval); break;
+	} 
+} 
+
+Token &Token:: operator =(const Token &t) 
+{ 
+	// if this object holds a string/Sales_data and t doesn't, we have to free the old string / Sales_data
+	if (tok == STR && t.tok != STR) 
+		sval. ~ string();
+	if (tok == SDATA && t.tok != SDATA)
+		s_dval. ~Sales_data();  
+	if (tok == STR && t.tok == STR)
+		sval = t.sval; // no need to construct a new string 
+	else if(tok == SDATA && t.tok == SDATA)
+		s_dval = t.s_dval; // no need to construct a new Sales_data
+	else 
+		copyUnion(t); // will construct a string if t.tok is STR 
+	tok = t.tok; 
+	return *this; 
+}
+
+
+// common operations for move
+void Token::moveUnion(Token &&t)
+{
+	switch (t.tok) {
+		case Token::INT: ival = std::move(t.ival); break;
+		case Token::CHAR: cval = std::move(t.cval); break;
+		case Token::DBL: dval = std::move(t.dval); break;
+		case Token::STR: new(&sval) std::string(std::move(t.sval)); break;
+		// to copy a Sales_data, construct it using placement new
+		case Token::SDATA: new(&s_dval) Sales_data(std::move(t.s_dval)); break;
+	}
+}
